@@ -1,0 +1,79 @@
+name: 'FedHuman-Dino'
+debug: True
+subset_size: 15
+subset: True
+comet: True
+personalized: True
+person_subset_size: 4
+subset_at_dataset_level: False
+
+#For Evaluation 
+eval_TTA: False
+eval_name: 'Fed-Mc+Depth+Dino_61K.pth'
+
+# restore_ckpt: 'weights/model_gaussian.pth'
+restore_ckpt: 'weights/MC+Depth-v2_150K.pth'
+
+# restore_ckpt: 'experiments/MC_Only/ckpt/MC_Only_latest.pth'
+finetune_ckpt: None
+generator_ckpt: 'weights/model_inpaint.pth'
+
+finetune_generator: False
+num_out_scaffold: 4
+
+lr: 0.0001
+wdecay: 1e-5
+batch_size: 1
+num_steps: 5000
+
+dataset:
+  num_total_cams: 16
+  num_inputs: 3
+  test_input_view: [0, 6, 11]
+  source_id: [0, 1]
+  train_novel_id: [2, 3, 4]
+  val_novel_id: [3]
+  use_hr_img: False
+  use_processed_data: False
+  data_root: 'datasets/THuman'
+
+raft:
+  mixed_precision: False
+  train_iters: 3
+  val_iters: 3
+  encoder_dims: [32, 48, 96]
+  hidden_dims: [96, 96, 96]
+
+gsnet:
+  encoder_dims: [32, 48, 96]
+  decoder_dims: [48, 64, 96]
+  parm_head_dim: 32
+
+record:
+  loss_freq: 1000
+  eval_freq: 1000
+
+fl:
+  exp_name: 'FedHuman_Avg'
+  client_eval_freq: 50
+  server_eval_freq: 50
+  iid: False
+  alpha: 1.0
+  num_local_steps: 10
+  
+  # Federated learning optimizer settings
+  optimizer: "fedavg"  # Options: "fedavg", "fedadam"
+  
+  # FedAdam specific parameters
+  fedadam_eta: 0.0001  # Client Learning rate
+  fedadam_eta_l: 0.0001  # Server Learning rate
+  # fedadam_beta1: 0.9  # First moment decay
+  # fedadam_beta2: 0.999  # Second moment decay
+  fedadam_tau: 0.001  # Adaptivity parameter
+  personalized: True
+  person_subset_size: 4
+
+  module_personalization: False
+  personalize_img_encoder: True
+  personalize_dino_encoder: True
+  personalize_gs_parm_regressor: False
